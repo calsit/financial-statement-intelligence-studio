@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial Statement Intelligence Studio</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <div class="top-row">
+            <p class="eyebrow" id="eyebrowLabel">AI Finance Portfolio Project</p>
+            <div class="lang-toggle" aria-label="Language toggle">
+              <button class="lang-button active" id="langEnBtn" type="button">EN</button>
+              <button class="lang-button" id="langZhBtn" type="button">中文</button>
+            </div>
+          </div>
+          <h1 id="heroTitle">Financial Statement Intelligence Studio</h1>
+          <p class="hero-text" id="heroText">Upload financial data, annual-report text, and peer valuation comps to generate an analyst-style dashboard.</p>
+          <div class="hero-actions hero-toolbar">
+            <button class="button secondary" id="openResearchBtn" type="button">Web Research</button>
+            <button class="button secondary" id="openMappingBtn" type="button">Field Mapping</button>
+          </div>
+
+          <div class="upload-grid">
+            <div class="upload-card">
+              <p class="section-label" id="financialUploadLabel">Financial dataset</p>
+              <div class="hero-actions">
+                <label class="button primary" for="fileInput" id="uploadFinanceBtn">Upload CSV or JSON</label>
+                <button class="button secondary" id="loadSampleBtn" type="button">Load Demo Dataset</button>
+              </div>
+              <p class="helper" id="financialHelper">Expected fields: <code>year,revenue,grossProfit,operatingIncome,netIncome,cash,assets,liabilities,equity,operatingCashFlow,capex</code></p>
+              <input id="fileInput" type="file" accept=".csv,.json,application/json,text/csv" hidden />
+            </div>
+
+            <div class="upload-card">
+              <p class="section-label" id="reportUploadLabel">Annual report text</p>
+              <div class="hero-actions">
+                <label class="button primary" for="reportFileInput" id="uploadReportBtn">Upload PDF or TXT</label>
+                <button class="button secondary" id="loadReportSampleBtn" type="button">Load Demo Report</button>
+              </div>
+              <p class="helper" id="reportHelper">PDF parsing is browser-side best effort. Paste text below if extraction is partial.</p>
+              <input id="reportFileInput" type="file" accept=".pdf,.txt,text/plain,application/pdf" hidden />
+            </div>
+
+            <div class="upload-card">
+              <p class="section-label" id="peerUploadLabel">Peer valuation comps</p>
+              <div class="hero-actions">
+                <label class="button primary" for="peerFileInput" id="uploadPeerBtn">Upload Peer CSV</label>
+                <button class="button secondary" id="loadPeerSampleBtn" type="button">Load Demo Comps</button>
+              </div>
+              <p class="helper" id="peerHelper">Expected fields: <code>company,ticker,price,marketCap,enterpriseValue,revenue,ebitda,netIncome</code></p>
+              <input id="peerFileInput" type="file" accept=".csv,text/csv" hidden />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="section">
+          <div class="section-heading">
+            <div>
+              <p class="section-label" id="snapshotLabel">Company Snapshot</p>
+              <h2 id="companyTitle">Awaiting dataset</h2>
+            </div>
+            <div class="pill-row" id="statusPills"></div>
+          </div>
+          <div class="metrics-grid" id="metricsGrid"></div>
+        </section>
+
+        <section class="section two-column">
+          <div class="chart-card">
+            <div class="card-heading">
+              <div>
+                <p class="section-label" id="trendLabel">Trend Monitor</p>
+                <h3 id="trendTitle">Revenue vs. Net Income</h3>
+              </div>
+            </div>
+            <canvas id="trendChart" width="720" height="360"></canvas>
+          </div>
+          <div class="analysis-card">
+            <div class="card-heading">
+              <div>
+                <p class="section-label" id="analysisLabel">Auto Summary</p>
+                <h3 id="analysisTitle">Analyst Notes</h3>
+              </div>
+            </div>
+            <div class="analysis-block">
+              <h4 id="highlightsTitle">Highlights</h4>
+              <ul id="highlightsList"></ul>
+            </div>
+            <div class="analysis-block">
+              <h4 id="risksTitle">Risks</h4>
+              <ul id="risksList"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section two-column report-section">
+          <div class="report-card">
+            <div class="card-heading">
+              <div>
+                <p class="section-label" id="reportTextLabel">Report Intelligence</p>
+                <h3 id="reportTextTitle">Annual Report Text</h3>
+              </div>
+              <button class="button secondary compact" id="analyzeReportBtn" type="button">Analyze Text</button>
+            </div>
+            <textarea id="reportInput"></textarea>
+          </div>
+          <div class="analysis-card">
+            <div class="card-heading">
+              <div>
+                <p class="section-label" id="llmConfigLabel">LLM Integration</p>
+                <h3 id="llmConfigTitle">OpenAI-Compatible API</h3>
+              </div>
+              <button class="button primary compact" id="runLlmBtn" type="button">Run LLM Analysis</button>
+            </div>
+            <div class="llm-grid">
+              <label class="field">
+                <span id="apiBaseLabel">Base URL</span>
+                <input id="apiBaseInput" type="text" placeholder="https://api.openai.com/v1" />
+              </label>
+              <label class="field">
+                <span id="apiModelLabel">Model</span>
+                <input id="apiModelInput" type="text" placeholder="gpt-5-mini" />
+              </label>
+              <label class="field">
+                <span id="apiKeyLabel">API Key</span>
+                <input id="apiKeyInput" type="password" placeholder="sk-..." />
+              </label>
+              <label class="field">
+                <span id="apiModeLabel">API Mode</span>
+                <select id="apiModeSelect">
+                  <option value="responses">Responses API</option>
+                  <option value="chat">Chat Completions</option>
+                </select>
+              </label>
+            </div>
+            <p class="helper" id="llmHelper">Keys stay in your browser via local storage. Use an OpenAI-compatible endpoint with CORS enabled.</p>
+            <p class="llm-status" id="llmStatus"></p>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="analysis-card">
+            <div class="card-heading">
+              <div>
+                <p class="section-label" id="reportSummaryLabel">Qualitative Readout</p>
+                <h3 id="reportSummaryTitle">LLM-Style Summary</h3>
+              </div>
+            </div>
+            <div class="analysis-block">
+              <h4 id="reportSentimentTitle">Management Tone</h4>
+              <p class="report-tone" id="reportTone"></p>
+            </div>
+            <div class="analysis-block">
+              <h4 id="reportSignalsTitle">Key Signals</h4>
+              <ul id="reportSignalsList"></ul>
+            </div>
+            <div class="analysis-block">
+              <h4 id="reportWatchTitle">Watch Items</h4>
+              <ul id="reportWatchList"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="card-heading">
+            <div>
+              <p class="section-label" id="valuationLabel">Relative Valuation</p>
+              <h3 id="valuationTitle">Peer Comparison</h3>
+            </div>
+          </div>
+          <div class="compare-toolbar">
+            <input id="peerSearchInput" type="text" placeholder="Search company or ticker to add" />
+            <div class="compare-actions">
+              <button class="button primary compact" id="addPeerBtn" type="button">Add Company</button>
+            </div>
+          </div>
+          <p class="helper compare-summary" id="peerSearchHelper">Uses the Alpha Vantage API key from Web Research settings.</p>
+          <p class="llm-status" id="peerSearchStatus"></p>
+          <div class="peer-controls">
+            <label class="field">
+              <span id="subjectCompanyLabel">Subject Company</span>
+              <select id="subjectCompanySelect"></select>
+            </label>
+            <div class="field">
+              <span id="compareCompaniesLabel">Compare Companies</span>
+              <div class="compare-toolbar">
+                <input id="compareSearchInput" type="text" placeholder="Search companies" />
+                <div class="compare-actions">
+                  <button class="button secondary compact" id="selectAllPeersBtn" type="button">Select all</button>
+                  <button class="button secondary compact" id="clearPeersBtn" type="button">Clear all</button>
+                </div>
+              </div>
+              <p class="helper compare-summary" id="compareSummaryText">Selected 0 companies</p>
+              <select id="compareCompaniesSelect" multiple></select>
+            </div>
+          </div>
+          <div class="valuation-summary" id="valuationSummary"></div>
+          <div class="table-wrap">
+            <table id="peerTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="card-heading">
+            <div>
+              <p class="section-label" id="webResearchLabel">Web Research</p>
+              <h3 id="webResearchTitle">Company Search Results</h3>
+            </div>
+          </div>
+          <div class="llm-grid">
+            <label class="field">
+              <span id="searchQueryLabel">Company or Ticker</span>
+              <input id="searchQueryInput" type="text" placeholder="Microsoft or MSFT" />
+            </label>
+            <label class="field">
+              <span id="alphaFunctionLabel">Alpha Function</span>
+              <select id="alphaFunctionSelect">
+                <option value="NEWS_SENTIMENT">NEWS_SENTIMENT</option>
+                <option value="OVERVIEW">OVERVIEW</option>
+                <option value="INCOME_STATEMENT">INCOME_STATEMENT</option>
+                <option value="BALANCE_SHEET">BALANCE_SHEET</option>
+                <option value="CASH_FLOW">CASH_FLOW</option>
+              </select>
+            </label>
+          </div>
+          <div class="hero-actions">
+            <button class="button primary compact" id="runResearchBtn" type="button">Run Search</button>
+            <button class="button secondary compact" id="applyResearchBtn" type="button">Append to Report Text</button>
+          </div>
+          <div class="research-summary" id="researchSummary"></div>
+          <div class="research-grid" id="researchResults"></div>
+        </section>
+
+        <section class="section">
+          <div class="card-heading">
+            <div>
+              <p class="section-label" id="memoLabel">Memo Builder</p>
+                <h3 id="memoTitle">Investment Brief</h3>
+            </div>
+            <button class="button secondary compact" id="copyMemoBtn" type="button">Copy Memo</button>
+          </div>
+          <textarea id="memoOutput" readonly></textarea>
+        </section>
+
+        <section class="section">
+          <div class="card-heading">
+            <div>
+              <p class="section-label" id="dataPreviewLabel">Data Preview</p>
+              <h3 id="dataPreviewTitle">Parsed Financial Table</h3>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="dataTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop hidden" id="mappingModal">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="fieldMappingTitle">
+        <div class="card-heading">
+          <div>
+            <p class="section-label" id="fieldMappingLabel">Field Mapping</p>
+            <h3 id="fieldMappingTitle">Editable Column Aliases</h3>
+          </div>
+          <button class="button secondary compact" id="closeMappingBtn" type="button">Close</button>
+        </div>
+        <div class="llm-grid">
+          <label class="field">
+            <span id="financialAliasLabel">Financial aliases</span>
+            <textarea id="financialAliasInput" class="mapping-input"></textarea>
+          </label>
+          <label class="field">
+            <span id="peerAliasLabel">Peer comp aliases</span>
+            <textarea id="peerAliasInput" class="mapping-input"></textarea>
+          </label>
+        </div>
+        <p class="helper" id="fieldMappingHelper">One line per standard field. Format: standard=alias1,alias2</p>
+      </div>
+    </div>
+
+    <div class="modal-backdrop hidden" id="researchModal">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="researchConfigTitle">
+        <div class="card-heading">
+          <div>
+            <p class="section-label" id="researchConfigLabel">Web Research Setup</p>
+            <h3 id="researchConfigTitle">Pluggable Search API</h3>
+          </div>
+          <button class="button secondary compact" id="closeResearchBtn" type="button">Close</button>
+        </div>
+        <div class="llm-grid">
+          <label class="field">
+            <span id="searchBaseLabel">Search Base URL</span>
+            <input id="searchBaseInput" type="text" placeholder="https://example.com/search" />
+          </label>
+          <label class="field">
+            <span id="searchApiKeyLabel">Search API Key</span>
+            <input id="searchApiKeyInput" type="password" placeholder="api-key" />
+          </label>
+              <label class="field">
+                <span id="searchModeLabel">Response Format</span>
+                <select id="searchModeSelect">
+                  <option value="generic">Generic JSON</option>
+                  <option value="newsapi">NewsAPI Style</option>
+                  <option value="gnews">GNews</option>
+                  <option value="alphavantage">Alpha Vantage</option>
+                </select>
+              </label>
+              <label class="field">
+                <span id="searchProxyLabel">Request Route</span>
+                <select id="searchProxySelect">
+                  <option value="direct">Direct Browser Request</option>
+                  <option value="local-proxy">Local Proxy</option>
+                </select>
+              </label>
+            </div>
+        <p class="helper" id="researchHelper">This module is provider-agnostic for now. Point it at a search/news endpoint that returns browser-accessible JSON with CORS enabled.</p>
+        <p class="llm-status" id="researchStatus"></p>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
