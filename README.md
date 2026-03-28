@@ -1,24 +1,126 @@
 # Financial Statement Intelligence Studio
 
-A zero-dependency portfolio project for finance and fintech applications. The app turns uploaded financial statement data into an analyst-style dashboard with ratio analysis, memo generation, and simple trend visualization.
+A bilingual equity-research workflow demo that combines structured financial parsing, annual-report analysis, web research, LLM-style qualitative output, and peer valuation comparison in one lightweight interface.
 
-## What it does
+## Overview
 
-- Uploads `CSV` or `JSON` financial statement datasets
-- Calculates revenue growth, margins, leverage, and free cash flow
-- Surfaces strengths and risks based on trend rules
-- Produces a ready-to-use investment memo summary
-- Displays a simple chart and normalized financial table
+This project is designed as a portfolio piece for finance, fintech, research, and AI application roles. It turns raw company inputs into a more analyst-like workflow:
 
-## Expected input
+- upload financial statements
+- extract key ratios and trends
+- analyze annual-report text
+- run web research through pluggable APIs
+- compare peer valuation multiples
+- generate memo-style output
 
-The CSV header should include:
+## Core features
+
+- Financial statement ingestion via `CSV` or `JSON`
+- Automatic calculation of revenue growth, margins, leverage, and free cash flow
+- Annual-report text analysis from `TXT` or browser-side PDF extraction
+- Real LLM integration through OpenAI-compatible APIs
+- Web research integration with `GNews` and `Alpha Vantage`
+- Local proxy support to avoid common browser `CORS` issues
+- Peer comparison with selectable subject company and custom comparable set
+- Add-company flow for pulling new peers from `Alpha Vantage`
+- Editable field mapping for inconsistent source column names
+- English and Chinese UI toggle
+
+## Tech setup
+
+- Frontend: plain `HTML`, `CSS`, and `JavaScript`
+- Local proxy: plain `Node.js` using built-in modules only
+- No frontend framework
+- No external runtime dependencies required
+
+## Project structure
+
+```text
+.
+|-- app/
+|   |-- index.html
+|   |-- app.js
+|   `-- styles.css
+|-- data/
+|   |-- sample-annual-report.txt
+|   |-- sample-annual-report-alt.txt
+|   |-- sample-financials.csv
+|   |-- sample-financials-alt.csv
+|   |-- sample-peer-comps.csv
+|   `-- sample-peer-comps-alt.csv
+|-- scripts/
+|   |-- server.js
+|   `-- stop-server.bat
+|-- start.bat
+`-- README.md
+```
+
+## Run locally
+
+For offline UI testing only, you can open:
+
+```text
+app/index.html
+```
+
+For full functionality, especially `Web Research` and local proxy routing:
+
+```powershell
+node scripts/server.js
+```
+
+Then open:
+
+```text
+http://localhost:3000
+```
+
+On Windows, you can also use:
+
+- `start.bat` to launch the local server and open the app
+- `scripts/stop-server.bat` to stop anything listening on port `3000`
+
+## Sample data
+
+Demo datasets are stored in `data/`:
+
+- `sample-financials.csv`
+- `sample-financials-alt.csv`
+- `sample-annual-report.txt`
+- `sample-annual-report-alt.txt`
+- `sample-peer-comps.csv`
+- `sample-peer-comps-alt.csv`
+
+## Web research setup
+
+### GNews
+
+- Search Base URL: `https://gnews.io/api/v4/search`
+- Response Format: `GNews`
+- Request Route: `Local Proxy`
+- Company or Ticker: for example `Microsoft`
+- Search API Key: your `GNews` API key
+
+### Alpha Vantage
+
+- Search Base URL: `https://www.alphavantage.co/query`
+- Response Format: `Alpha Vantage`
+- Alpha Function: `NEWS_SENTIMENT`, `OVERVIEW`, `INCOME_STATEMENT`, `BALANCE_SHEET`, or `CASH_FLOW`
+- Request Route: `Local Proxy`
+- Company or Ticker: for example `MSFT`
+- Search API Key: your `Alpha Vantage` API key
+
+You can also use the `Add Company` control inside `Peer Comparison` to fetch and append a comparable company through the same `Alpha Vantage` key.
+
+## Expected financial input
+
+Expected base financial fields:
 
 ```text
 year,revenue,grossProfit,operatingIncome,netIncome,cash,assets,liabilities,equity,operatingCashFlow,capex
 ```
 
-Example JSON format:
+Example JSON:
 
 ```json
 {
@@ -42,70 +144,10 @@ Example JSON format:
 }
 ```
 
-## Run locally
+If source files use different field names, the app supports alias mapping through the `Field Mapping` modal.
 
-You can still open `app/index.html` directly in a browser for offline demo features.
+## Resume-ready description
 
-If you want `Web Research` with a local proxy for services like GNews, run:
+Use this as a concise bullet:
 
-```powershell
-node scripts/server.js
-```
-
-Then open:
-
-```text
-http://localhost:3000
-```
-
-On Windows, you can also just double-click:
-
-- `start.bat` to launch the local server and open the app
-- `scripts/stop-server.bat` to stop anything listening on port `3000`
-
-## Project structure
-
-```text
-.
-|-- app/
-|   |-- index.html
-|   |-- app.js
-|   `-- styles.css
-|-- data/
-|   |-- sample-annual-report.txt
-|   |-- sample-annual-report-alt.txt
-|   |-- sample-financials.csv
-|   |-- sample-financials-alt.csv
-|   |-- sample-peer-comps.csv
-|   `-- sample-peer-comps-alt.csv
-|-- start.bat
-|-- scripts/
-|   |-- server.js
-|   `-- stop-server.bat
-`-- README.md
-```
-
-Recommended `GNews` settings in the app:
-
-- Search Base URL: `https://gnews.io/api/v4/search`
-- Response Format: `GNews`
-- Request Route: `Local Proxy`
-- Company or Ticker: for example `Microsoft`
-- Search API Key: your GNews API key
-
-Recommended `Alpha Vantage` settings in the app:
-
-- Search Base URL: `https://www.alphavantage.co/query`
-- Response Format: `Alpha Vantage`
-- Alpha Function: `NEWS_SENTIMENT` or `OVERVIEW`
-- Request Route: `Local Proxy`
-- Company or Ticker: for example `MSFT`
-- Search API Key: your Alpha Vantage API key
-
-You can also use the `Add Company` control inside `Peer Comparison` to fetch and append a comparable company using the Alpha Vantage API key already configured in `Web Research`.
-
-## Resume angle
-
-You can describe this project as:
-
-> Built a financial statement analysis tool that parses structured company financials, computes key ratios, visualizes trends, and generates memo-ready investment commentary.
+> Built a financial statement intelligence platform that parses structured company financials, analyzes annual-report text, integrates live company research APIs, supports peer valuation comparison, and generates memo-ready investment commentary.
