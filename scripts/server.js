@@ -159,7 +159,13 @@ async function fetchAlpha(params) {
 }
 
 function serveStatic(requestPath, res) {
-  const relativePath = requestPath === "/" ? "/app/index.html" : requestPath;
+  if (requestPath === "/") {
+    res.writeHead(302, { Location: "/app/index.html" });
+    res.end();
+    return;
+  }
+
+  const relativePath = requestPath;
   const safePath = path.normalize(relativePath).replace(/^(\.\.[/\\])+/, "");
   const filePath = path.join(ROOT, safePath);
 
