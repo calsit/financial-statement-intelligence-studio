@@ -44,7 +44,7 @@ Example JSON format:
 
 ## Run locally
 
-You can still open `index.html` directly in a browser for offline demo features.
+You can still open `app/index.html` directly in a browser for offline demo features.
 
 If you want `Web Research` with a local proxy for services like GNews, run:
 
@@ -60,8 +60,30 @@ http://localhost:3000
 
 On Windows, you can also just double-click:
 
-- `start.bat` to launch the local server and open the app
-- `stop-server.bat` to stop anything listening on port `3000`
+- `scripts/start.bat` to launch the local server and open the app
+- `scripts/stop-server.bat` to stop anything listening on port `3000`
+
+## Project structure
+
+```text
+.
+|-- app/
+|   |-- index.html
+|   |-- app.js
+|   `-- styles.css
+|-- data/
+|   |-- sample-annual-report.txt
+|   |-- sample-annual-report-alt.txt
+|   |-- sample-financials.csv
+|   |-- sample-financials-alt.csv
+|   |-- sample-peer-comps.csv
+|   `-- sample-peer-comps-alt.csv
+|-- scripts/
+|   |-- start.bat
+|   `-- stop-server.bat
+|-- server.js
+`-- README.md
+```
 
 Recommended `GNews` settings in the app:
 
