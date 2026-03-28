@@ -49,7 +49,7 @@ You can still open `app/index.html` directly in a browser for offline demo featu
 If you want `Web Research` with a local proxy for services like GNews, run:
 
 ```powershell
-node server.js
+node scripts/server.js
 ```
 
 Then open:
@@ -60,7 +60,7 @@ http://localhost:3000
 
 On Windows, you can also just double-click:
 
-- `scripts/start.bat` to launch the local server and open the app
+- `start.bat` to launch the local server and open the app
 - `scripts/stop-server.bat` to stop anything listening on port `3000`
 
 ## Project structure
@@ -78,10 +78,10 @@ On Windows, you can also just double-click:
 |   |-- sample-financials-alt.csv
 |   |-- sample-peer-comps.csv
 |   `-- sample-peer-comps-alt.csv
+|-- start.bat
 |-- scripts/
-|   |-- start.bat
+|   |-- server.js
 |   `-- stop-server.bat
-|-- server.js
 `-- README.md
 ```
 
